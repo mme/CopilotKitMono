@@ -1,0 +1,33 @@
+# Generated from the vendored repos' own pnpm-workspace.yaml files by
+# scripts/mono/sync-workspace.mjs (run by 'pnpm mono:branch'). Re-run it if
+# upstream's workspace layout changes; don't edit the globs by hand.
+packages:
+  - "CopilotKit/packages/*"
+  - "CopilotKit/examples/v1/*"
+  - "CopilotKit/examples/v2/*"
+  - "CopilotKit/examples/v2/*/apps/*"
+  - "CopilotKit/examples/v2/react/*"
+  - "CopilotKit/examples/v2/vue/*"
+  - "CopilotKit/examples/v2/angular/*"
+  - "CopilotKit/examples/v2/react-native/*"
+  - "CopilotKit/examples/v2/runtime/*"
+  - "CopilotKit/examples/showcases/generative-ui-playground"
+  - "CopilotKit/examples/showcases/banking"
+  - "CopilotKit/examples/slack"
+  - "CopilotKit/examples/teams"
+  - "!CopilotKit/examples/v1/_legacy"
+  - "CopilotKit/showcase/scripts"
+  - "CopilotKit/showcase/harness"
+  - "CopilotKit/showcase/eval-webhook"
+  - "ag-ui/apps/*"
+  - "ag-ui/middlewares/*"
+  - "ag-ui/sdks/typescript/packages/*"
+  - "ag-ui/sdks/dotnet/tests/CrossLanguage.Vitest"
+  - "ag-ui/integrations/*/typescript"
+  - "ag-ui/integrations/community/*/typescript"
+  - "ag-ui/integrations/aws-strands/typescript/examples"
+  - "ag-ui/integrations/mastra/typescript/examples"
+onlyBuiltDependencies:
+  - better-sqlite3
+ignoredBuiltDependencies:
+  - nx

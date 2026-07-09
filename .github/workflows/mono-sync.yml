@@ -1,0 +1,45 @@
+name: mono-sync
+
+# Keeps main's vendored repos (registry: mono.config.json) current with their
+# upstream default branches. Merges are clean by construction: the vendored
+# prefixes are disjoint and mono-main-guard blocks human PRs from touching
+# them, so the bot never faces a conflict.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mono-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Sync vendored repos
+        run: |
+          git config user.name "mono-sync[bot]"
+          git config user.email "mono-sync[bot]@users.noreply.github.com"
+          # registry remotes are SSH; the runner fetches public repos over https
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          node scripts/mono/sync.mjs
+      - name: Push
+        # This repo carries LFS pointers only (see .lfsconfig). The runner's
+        # git-lfs must not take part in the push at all: with its hooks
+        # active, GitHub's pre-receive rejects the push over the LFS objects
+        # we intentionally don't store (GH008) — while a plain git push of
+        # the same commits is accepted.
+        run: |
+          git lfs uninstall --local 2>/dev/null || true
+          git push --no-verify origin main

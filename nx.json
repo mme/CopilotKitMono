@@ -1,0 +1,28 @@
+{
+  "plugins": ["nx/plugins/package-json"],
+  "parallel": 100,
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build", "generate"],
+      "outputs": ["{projectRoot}/dist"],
+      "cache": true
+    },
+    "dev": {
+      "dependsOn": ["^build", "generate"],
+      "cache": false
+    },
+    "generate": {
+      "outputs": ["{projectRoot}/src/generated"],
+      "cache": true
+    },
+    "generate-graphql-schema": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/__snapshots__/**"],
+      "cache": true
+    },
+    "graphql-codegen": {
+      "dependsOn": ["^build"],
+      "cache": true
+    }
+  }
+}

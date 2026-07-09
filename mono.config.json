@@ -1,0 +1,18 @@
+{
+  "repos": [
+    {
+      "name": "copilotkit",
+      "prefix": "CopilotKit",
+      "remote": "git@github.com:mme/CopilotKit-Mono-Test.git",
+      "ghRepo": "mme/CopilotKit-Mono-Test",
+      "defaultBranch": "main"
+    },
+    {
+      "name": "ag-ui",
+      "prefix": "ag-ui",
+      "remote": "git@github.com:mme/ag-ui-Mono-Test.git",
+      "ghRepo": "mme/ag-ui-Mono-Test",
+      "defaultBranch": "main"
+    }
+  ]
+}
