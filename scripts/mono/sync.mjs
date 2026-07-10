@@ -38,8 +38,15 @@ for (const repo of repos) {
 // gone stale — refresh it with `node scripts/mono/sync-workspace.mjs`
 // (mirrors the vendored repos' own workspace files) and commit.
 run("pnpm", ["install", "--lockfile-only"]);
-if (git(["status", "--porcelain"])) {
-  git(["add", "-A"]);
+const dirty = git(["status", "--porcelain"]);
+if (dirty) {
+  // Only the lockfile may be auto-committed; anything else dirty means
+  // something unexpected touched the tree — fail loudly, never commit it.
+  const extra = dirty.split("\n").filter((l) => !l.endsWith("pnpm-lock.yaml"));
+  if (extra.length) {
+    die(`unexpected changes after lockfile install (only pnpm-lock.yaml may change):\n${extra.join("\n")}`);
+  }
+  git(["add", "pnpm-lock.yaml"]);
   git(["commit", "-m", "Sync lockfile for vendored repos"]);
   changed = true;
 }
