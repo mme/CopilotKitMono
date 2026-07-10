@@ -28,11 +28,18 @@ jobs:
         with:
           node-version: 22
       - name: Sync vendored repos
+        env:
+          GIT_LFS_SKIP_SMUDGE: "1"
         run: |
           git config user.name "mono-sync[bot]"
           git config user.email "mono-sync[bot]@users.noreply.github.com"
           # registry remotes are SSH; the runner fetches public repos over https
           git config --global url."https://github.com/".insteadOf "git@github.com:"
+          # the runner ships git-lfs; disarm it for this pointer-only repo and
+          # renormalize the worktree so lfs smudge artifacts don't read as a
+          # dirty tree
+          git lfs uninstall --local 2>/dev/null || true
+          git checkout -f HEAD -- .
           node scripts/mono/sync.mjs
       - name: Push
         # This repo carries LFS pointers only (see .lfsconfig). GitHub's

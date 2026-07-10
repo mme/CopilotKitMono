@@ -75,8 +75,9 @@ export function currentBranch() {
 }
 
 export function ensureClean() {
-  if (git(["status", "--porcelain"])) {
-    die("working tree has uncommitted changes — commit or stash first.");
+  const dirty = git(["status", "--porcelain"]);
+  if (dirty) {
+    die(`working tree has uncommitted changes — commit or stash first.\n${dirty}`);
   }
 }
 
