@@ -25,7 +25,9 @@ branch is deleted. Vendored paths on `main` change only through the sync bot
 ```bash
 GIT_LFS_SKIP_SMUDGE=1 git clone git@github.com:mme/CopilotKitMono.git   # add --filter=blob:none for a lean lazy clone
 cd CopilotKitMono
-git lfs uninstall --local 2>/dev/null; true   # REQUIRED if you have git-lfs installed — see Maintainer notes
+# REQUIRED if you have git-lfs installed (see Maintainer notes) — disarm it for this repo:
+git config filter.lfs.smudge cat; git config filter.lfs.clean cat
+git config filter.lfs.process cat; git config filter.lfs.required false
 pnpm install
 ```
 

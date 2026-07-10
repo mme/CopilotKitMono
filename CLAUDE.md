@@ -100,7 +100,9 @@ using raw `git`/`gh`. The repo registry is `mono.config.json` (remote names
 - **Never let git-lfs touch this repo.** It is pointer-only (no LFS storage);
   one LFS-enabled client contact permanently flips GitHub into rejecting all
   vendored pushes. If git-lfs is installed: `GIT_LFS_SKIP_SMUDGE=1` for
-  clones and `git lfs uninstall --local` in every clone before pushing.
+  clones, then in every clone override the global filters (see README setup:
+  `git config filter.lfs.{smudge,clean,process} cat` + `required false`)
+  before pushing.
 - **PR discipline**: open a PR only for a repo whose branch actually differs
   from its upstream main; cross-link companion PRs in both bodies
   (`pnpm mono:pr --link`); when one PR depends on the other, state the

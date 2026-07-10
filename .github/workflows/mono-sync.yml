@@ -35,11 +35,14 @@ jobs:
           git config user.email "mono-sync[bot]@users.noreply.github.com"
           # registry remotes are SSH; the runner fetches public repos over https
           git config --global url."https://github.com/".insteadOf "git@github.com:"
-          # the runner ships git-lfs; disarm it for this pointer-only repo and
-          # renormalize the worktree so lfs smudge artifacts don't read as a
-          # dirty tree
-          git lfs uninstall --local 2>/dev/null || true
+          # The runner ships git-lfs with GLOBAL filters ('--local' is a
+          # no-op). With filters active, upstream files that were committed
+          # raw despite lfs-tracking attributes read as phantom-modified and
+          # trip the clean-tree check. Remove lfs entirely (runner is
+          # ephemeral) and renormalize.
+          git lfs uninstall 2>/dev/null || true
           git checkout -f HEAD -- .
+          git update-index --refresh -q || true
           node scripts/mono/sync.mjs
       - name: Push
         # This repo carries LFS pointers only (see .lfsconfig). GitHub's
@@ -51,7 +54,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git lfs uninstall --local 2>/dev/null || true
           SHA=$(git rev-parse HEAD)
           git push --no-verify origin "HEAD:refs/heads/mono-sync-staging"
           gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/heads/main" -f sha="$SHA"
