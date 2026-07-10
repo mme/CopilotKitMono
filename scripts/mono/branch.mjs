@@ -44,18 +44,4 @@ if (from) {
   }
 }
 
-console.log("\nInstalling workspace…");
-run("pnpm", ["install"]);
-const dirty = git(["status", "--porcelain"]);
-if (dirty) {
-  // Only the lockfile may be auto-committed — anything else would become an
-  // unreviewed upstream-facing change.
-  const extra = dirty.split("\n").filter((l) => !l.endsWith("pnpm-lock.yaml"));
-  if (extra.length) {
-    die(`install left unexpected changes (only pnpm-lock.yaml may auto-commit):\n${extra.join("\n")}`);
-  }
-  git(["add", "pnpm-lock.yaml"]);
-  git(["commit", "-m", "Sync lockfile for vendored repos"]);
-}
-
-console.log(`\nBranch '${name}' is ready. Dev loop: pnpm dev:packages + pnpm dev:demo`);
+console.log(`\nBranch '${name}' is ready. Dev loop: pnpm install, then pnpm dev:packages + pnpm dev:demo`);
