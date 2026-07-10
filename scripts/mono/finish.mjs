@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { createInterface } from "node:readline/promises";
-import { repos, git, tryGit, die, ensureClean, ensureOnFeatureBranch, fetchRepo, remoteBranch, currentBranch } from "./lib.mjs";
+import { repos, git, tryGit, die, ensureClean, ensureOnFeatureBranch, fetchRepo, remoteBranch, subtreeChanged, currentBranch } from "./lib.mjs";
 
 const force = process.argv.includes("--force");
 const yes = process.argv.includes("--yes");
@@ -23,7 +23,11 @@ for (const repo of repos) {
 }
 
 if (!force) {
-  for (const repo of pushedRepos) {
+  for (const repo of repos) {
+    const pushed = pushedRepos.includes(repo);
+    // A repo with subtree commits but no upstream branch AND no PR has work
+    // that shipped nowhere — deleting the branch would be the only copy dying.
+    if (!pushed && !subtreeChanged(repo, branch)) continue;
     let pr;
     try {
       pr = JSON.parse(execFileSync("gh", ["pr", "list", "--repo", repo.ghRepo, "--head", branch, "--state", "all",
@@ -31,11 +35,21 @@ if (!force) {
     } catch {
       die(`cannot check PR state for ${repo.name} — is gh installed and authenticated? (--force to skip PR checks)`);
     }
-    if (!pr) die(`${repo.name}: '${branch}' is pushed upstream but has no PR — finishing would strand it. (--force to override)`);
+    if (!pr) {
+      die(pushed
+        ? `${repo.name}: '${branch}' is pushed upstream but has no PR — finishing would strand it. (--force to override)`
+        : `${repo.name}: has subtree commits that were never pushed upstream (no branch, no PR) — 'pnpm mono:push' first, or --force to abandon them.`);
+    }
     if (pr.state !== "MERGED" && pr.state !== "CLOSED") {
       die(`${repo.name}: PR #${pr.number} is still ${pr.state}: ${pr.url}`);
     }
   }
+}
+
+// Scaffold-only commits (outside every vendored prefix) ship nowhere — say so.
+const scaffoldCount = tryGit(["rev-list", "--count", "refs/remotes/origin/main..HEAD", "--", ".", ...repos.map((r) => `:(exclude)${r.prefix}`)]);
+if (scaffoldCount && scaffoldCount !== "0") {
+  console.log(`\nnote: ${scaffoldCount} commit(s) touch scaffold files outside the vendored dirs — those changes ship nowhere and die with the branch.`);
 }
 
 console.log("\nThis will delete:");

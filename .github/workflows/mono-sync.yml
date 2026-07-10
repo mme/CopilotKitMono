@@ -55,6 +55,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           SHA=$(git rev-parse HEAD)
-          git push --no-verify origin "HEAD:refs/heads/mono-sync-staging"
+          # --force: staging is a throwaway ref; a leftover from a failed run
+          # must never wedge the next one.
+          git push --no-verify --force origin "HEAD:refs/heads/mono-sync-staging"
           gh api -X PATCH "repos/${GITHUB_REPOSITORY}/git/refs/heads/main" -f sha="$SHA"
-          git push origin --delete mono-sync-staging
+          git push origin --delete mono-sync-staging || true

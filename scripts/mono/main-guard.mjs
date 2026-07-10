@@ -1,7 +1,8 @@
 import { repos, git } from "./lib.mjs";
 
 const base = process.argv[2] ?? "origin/main";
-const changed = git(["diff", "--name-only", `${base}...HEAD`]).split("\n").filter(Boolean);
+const head = process.argv[3] ?? "HEAD";
+const changed = git(["diff", "--name-only", `${base}...${head}`]).split("\n").filter(Boolean);
 const bad = changed.filter((f) => repos.some((r) => f === r.prefix || f.startsWith(`${r.prefix}/`)));
 
 if (bad.length) {

@@ -99,10 +99,17 @@ using raw `git`/`gh`. The repo registry is `mono.config.json` (remote names
   ancestry for every branch and clone.
 - **Never let git-lfs touch this repo.** It is pointer-only (no LFS storage);
   one LFS-enabled client contact permanently flips GitHub into rejecting all
-  vendored pushes. If git-lfs is installed: `GIT_LFS_SKIP_SMUDGE=1` for
-  clones, then in every clone override the global filters (see README setup:
-  `git config filter.lfs.{smudge,clean,process} cat` + `required false`)
-  before pushing.
+  vendored pushes. If git-lfs is installed: uninstall it machine-wide
+  (`git lfs uninstall`) or always use `GIT_LFS_SKIP_SMUDGE=1`, and never
+  `git add` LFS-tracked binary assets here (asset work belongs in a real
+  upstream checkout). The committed `.lfsconfig` dead-endpoint is the
+  backstop.
+- **Dependency changes must update the vendored repo's own lockfile.** The
+  root `pnpm-lock.yaml` never reaches upstream (splits export only the
+  prefix). If you change a `package.json` inside `CopilotKit/` or `ag-ui/`,
+  also run `pnpm install --lockfile-only` inside that vendored dir and commit
+  its `pnpm-lock.yaml` in the same commit, or the upstream PR ships a stale
+  lockfile.
 - **PR discipline**: open a PR only for a repo whose branch actually differs
   from its upstream main; cross-link companion PRs in both bodies
   (`pnpm mono:pr --link`); when one PR depends on the other, state the

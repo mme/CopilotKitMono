@@ -88,14 +88,21 @@ export function ensureOnMain() {
 }
 
 export function ensureOnFeatureBranch() {
-  if (currentBranch() === "main") {
+  const b = currentBranch();
+  if (b === "HEAD") {
+    die("detached HEAD — check out a feature branch first.");
+  }
+  if (b === "main") {
     die("this command runs on a feature branch, not main. Start one with: pnpm mono:branch <name>");
   }
 }
 
 export function fetchRepo(repo) {
-  if (!tryGit(["remote", "get-url", repo.name])) {
+  const url = tryGit(["remote", "get-url", repo.name]);
+  if (!url) {
     git(["remote", "add", repo.name, repo.remote]);
+  } else if (url !== repo.remote) {
+    die(`remote '${repo.name}' points at ${url}, but mono.config.json says ${repo.remote} — fix or remove that remote before continuing.`);
   }
   run("git", ["fetch", "--quiet", "--prune", repo.name]);
 }
@@ -117,5 +124,6 @@ export function cutLine(repo, branch) {
 }
 
 export function subtreeChanged(repo, branch) {
-  return git(["rev-list", "--count", "--no-merges", `${cutLine(repo, branch)}..HEAD`, "--", repo.prefix]) !== "0";
+  // No --no-merges: conflict resolutions live in merge commits and must count.
+  return git(["rev-list", "--count", `${cutLine(repo, branch)}..HEAD`, "--", repo.prefix]) !== "0";
 }

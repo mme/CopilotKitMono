@@ -8,10 +8,17 @@ jobs:
   guard:
     runs-on: ubuntu-latest
     steps:
+      # Check out the BASE branch, not the PR: the guard script and repo
+      # registry must come from the trusted side, or a PR could rewrite the
+      # guard (or mono.config.json) to approve itself.
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.base_ref }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: node scripts/mono/main-guard.mjs origin/${{ github.base_ref }}
+          node-version: 22
+      - name: Guard vendored paths
+        run: |
+          git fetch --quiet origin ${{ github.event.pull_request.head.sha }}
+          node scripts/mono/main-guard.mjs origin/${{ github.base_ref }} ${{ github.event.pull_request.head.sha }}

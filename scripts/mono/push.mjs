@@ -1,4 +1,4 @@
-import { repos, git, run, gitOk, die, ensureClean, ensureOnFeatureBranch, fetchRepo, remoteBranch, subtreeChanged, joshSplit, cutLine, currentBranch } from "./lib.mjs";
+import { repos, git, tryGit, run, gitOk, die, ensureClean, ensureOnFeatureBranch, fetchRepo, remoteBranch, subtreeChanged, joshSplit, cutLine, currentBranch } from "./lib.mjs";
 
 const force = process.argv.includes("--force");
 ensureOnFeatureBranch();
@@ -39,7 +39,22 @@ for (const repo of repos) {
     die(`${repo.name}: upstream '${branch}' has commits you don't have — run 'pnpm mono:pull' first (or push with --force to overwrite).`);
   }
 
-  run("git", ["push", ...(force ? ["--force"] : []), repo.name, `${split}:refs/heads/${branch}`]);
+  // --force-with-lease pins any overwrite to the tip we just fetched, so a
+  // reviewer commit landing between fetch and push is never clobbered.
+  run("git", ["push", ...(force && upstreamTip ? [`--force-with-lease=refs/heads/${branch}:${upstreamTip}`] : []), repo.name, `${split}:refs/heads/${branch}`]);
   console.log(`${repo.name}: pushed '${branch}'.`);
   recordSplit(repo, split);
+}
+
+// Share the split markers: if the mono branch already lives on origin, push
+// it now — a teammate who picks up the branch without the markers gets
+// spurious conflicts on their next mono:pull.
+tryGit(["fetch", "--quiet", "origin"]);
+const originTip = tryGit(["rev-parse", "--verify", "--quiet", `refs/remotes/origin/${branch}`]);
+if (originTip && originTip !== git(["rev-parse", "HEAD"])) {
+  if (tryGit(["push", "origin", branch]) !== null) {
+    console.log(`origin: pushed '${branch}' (split markers shared).`);
+  } else {
+    console.log(`origin: could not push '${branch}' — share the split markers with 'git push origin ${branch}' (pull first if it diverged).`);
+  }
 }

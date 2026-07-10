@@ -17,9 +17,11 @@ if (tryGit(["rev-parse", "--verify", "--quiet", `refs/heads/${name}`])) {
 }
 
 // main carries the vendored sources (kept fresh by the mono-sync workflow) —
-// start from its latest state.
-if (!tryGit(["pull", "--ff-only", "origin", "main"])) {
-  console.log("warning: could not fast-forward main from origin — branching from local main as-is.");
+// start from its latest state. Branching from stale main must be a choice,
+// never an accident.
+const stale = args.includes("--stale");
+if (!stale && !tryGit(["pull", "--ff-only", "origin", "main"])) {
+  die("could not fast-forward main from origin (offline? diverged?). Fix that, or re-run with --stale to branch from local main as-is.");
 }
 
 for (const repo of repos) fetchRepo(repo);
@@ -44,8 +46,15 @@ if (from) {
 
 console.log("\nInstalling workspace…");
 run("pnpm", ["install"]);
-if (git(["status", "--porcelain"])) {
-  git(["add", "-A"]);
+const dirty = git(["status", "--porcelain"]);
+if (dirty) {
+  // Only the lockfile may be auto-committed — anything else would become an
+  // unreviewed upstream-facing change.
+  const extra = dirty.split("\n").filter((l) => !l.endsWith("pnpm-lock.yaml"));
+  if (extra.length) {
+    die(`install left unexpected changes (only pnpm-lock.yaml may auto-commit):\n${extra.join("\n")}`);
+  }
+  git(["add", "pnpm-lock.yaml"]);
   git(["commit", "-m", "Sync lockfile for vendored repos"]);
 }
 

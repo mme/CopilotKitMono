@@ -1,6 +1,9 @@
 {
   "private": true,
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.33.4",
+  "devDependencies": {
+    "nx": "22.7.5"
+  },
   "scripts": {
     "build:packages": "pnpm nx run-many -t build --projects='@copilotkit/*,@copilotkitnext/*,@ag-ui/*'",
     "dev:packages": "pnpm build:packages && pnpm nx watch --projects='@copilotkit/*,@copilotkitnext/*,@ag-ui/*' -- pnpm nx run \\$NX_PROJECT_NAME:build",
