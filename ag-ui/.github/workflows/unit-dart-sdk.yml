@@ -1,0 +1,42 @@
+name: unit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sdks/community/dart/**"
+      - ".github/workflows/unit-dart-sdk.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "sdks/community/dart/**"
+      - ".github/workflows/unit-dart-sdk.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  dart:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: sdks/community/dart
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          lfs: true
+          persist-credentials: false
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@65eb853c7ba17dde3be364c3d2858773e7144260  # v1.7.2
+        with:
+          sdk: stable
+
+      - name: Install dependencies
+        run: dart pub get
+
+      - name: Run tests
+        run: dart test --exclude-tags requires-server
