@@ -4,7 +4,7 @@
 // clean by construction — the prefixes are disjoint and humans never modify
 // vendored paths on main (CI-enforced) — so this is safe to run unattended.
 // Run by .github/workflows/mono-sync.yml on a schedule; also fine locally.
-import { ROOT, repos, git, run, gitOk, ensureClean, ensureOnMain, fetchRepo } from "./lib.mjs";
+import { ROOT, repos, git, run, gitOk, die, ensureClean, ensureOnMain, fetchRepo } from "./lib.mjs";
 
 // The sync only plumbs history — LFS pointer files are what gets committed,
 // so never let a locally-installed git-lfs try to smudge (download) the
