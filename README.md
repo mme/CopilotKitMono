@@ -146,7 +146,11 @@ OPENAI_API_KEY=sk-...
   pointer files and has NO LFS storage — and it must stay that way. **If any
   git-lfs-enabled client ever contacts this repo's LFS API, GitHub permanently
   flips the repo into LFS validation and rejects every future vendored push**
-  (learned the hard way; the fix was recreating the repo). Hence the setup
-  rule below; the sync workflow is already LFS-blind.
+  (learned the hard way; the fix was recreating the repo). Two defenses: the
+  committed `.lfsconfig` points `lfs.url` at a dead endpoint (a stray git-lfs
+  fails on the client instead of reaching GitHub), and the setup recipe above
+  disarms the filters per clone. The sync workflow is already LFS-blind. The
+  permanent fix is a GitHub support ticket asking to disable LFS for this
+  repo (not filed yet).
 - Adding a linked repo: new entry in `mono.config.json`; the next `mono-sync`
   run vendors it and regenerates the workspace globs.
