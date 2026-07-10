@@ -1,0 +1,11 @@
+{
+  "title": "A2A",
+  "root": true,
+  "pages": [
+    "index",
+    "---Generative UI---",
+    "...generative-ui",
+    "---Intelligence Platform---",
+    "threads"
+  ]
+}

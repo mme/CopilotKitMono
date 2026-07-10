@@ -1,0 +1,33 @@
+{
+  "title": "AG2",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "quickstart",
+    "cli",
+    "build-with-agents",
+    "---Basics---",
+    "prebuilt-components",
+    "threads",
+    "custom-look-and-feel",
+    "programmatic-control",
+    "inspector",
+    "---Generative UI---",
+    "...generative-ui",
+    "---App Control---",
+    "frontend-tools",
+    "shared-state",
+    "readables",
+    "---AG2---",
+    "auth",
+    "---Backend---",
+    "copilot-runtime",
+    "ag-ui",
+    "---Intelligence Platform---",
+    "---Troubleshooting---",
+    "...troubleshooting",
+    "---Other---",
+    "...(other)"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Runtime",
+  "pages": [
+    "copilot-runtime",
+    "runtime-endpoints",
+    "custom-agent",
+    "agent-runner",
+    "self-managed-agents",
+    "ag-ui"
+  ]
+}

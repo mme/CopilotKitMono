@@ -1,0 +1,27 @@
+{
+  "title": "LangGraph",
+  "root": true,
+  "pages": [
+    "index",
+    "cli",
+    "---Basics---",
+    "prebuilt-components",
+    "threads",
+    "custom-look-and-feel",
+    "programmatic-control",
+    "---Generative UI---",
+    "...generative-ui",
+    "---App Control---",
+    "frontend-tools",
+    "shared-state",
+    "agent-app-context",
+    "---LangGraph---",
+    "human-in-the-loop/interrupt-flow",
+    "configurable",
+    "subgraphs",
+    "auth",
+    "---Intelligence Platform---",
+    "---Tutorials---",
+    "...tutorials"
+  ]
+}

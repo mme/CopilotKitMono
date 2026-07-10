@@ -1,0 +1,31 @@
+{
+  "title": "Mastra",
+  "root": true,
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "quickstart",
+    "cli",
+    "build-with-agents",
+    "---Basics---",
+    "prebuilt-components",
+    "threads",
+    "custom-look-and-feel",
+    "programmatic-control",
+    "inspector",
+    "---Generative UI---",
+    "...generative-ui",
+    "---App Control---",
+    "frontend-tools", "shared-state", "agent-app-context",
+    "---Mastra---",
+    "...human-in-the-loop",
+    "---Backend---",
+    "copilot-runtime",
+    "ag-ui",
+    "---Intelligence Platform---",
+    "---Troubleshooting---",
+    "...troubleshooting",
+    "---Other---",
+    "...(other)"
+  ]
+}
