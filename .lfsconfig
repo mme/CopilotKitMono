@@ -1,0 +1,11 @@
+# TRIPWIRE — this repo is LFS-pointer-only, by design and by necessity:
+# if any git-lfs-enabled client ever contacts the repo's real LFS API,
+# GitHub permanently flips the repo into LFS validation and rejects every
+# vendored push (recoverable only by support ticket or repo recreation).
+# Pointing lfs.url at a dead endpoint makes a stray git-lfs fail fast and
+# loud on the client instead of poisoning the repo. fetchexclude keeps
+# clones working (pointers stay pointers, no downloads attempted).
+[lfs]
+	url = https://localhost/this-repo-is-lfs-pointer-only
+	fetchexclude = *
+	allowincompletepush = true
