@@ -35,12 +35,14 @@ jobs:
           git config user.email "mono-sync[bot]@users.noreply.github.com"
           # registry remotes are SSH; the runner fetches public repos over https
           git config --global url."https://github.com/".insteadOf "git@github.com:"
-          # The runner ships git-lfs with GLOBAL filters ('--local' is a
-          # no-op). With filters active, upstream files that were committed
-          # raw despite lfs-tracking attributes read as phantom-modified and
-          # trip the clean-tree check. Remove lfs entirely (runner is
-          # ephemeral) and renormalize.
+          # The runner ships git-lfs with filters at global AND sometimes
+          # system scope (image-dependent). With any filter active, upstream
+          # files committed raw despite lfs-tracking attributes read as
+          # phantom-modified and trip the clean-tree check. Remove lfs at
+          # every scope (runner is ephemeral) and renormalize.
+          sudo git lfs uninstall --system 2>/dev/null || true
           git lfs uninstall 2>/dev/null || true
+          git lfs uninstall --local 2>/dev/null || true
           git checkout -f HEAD -- .
           git update-index --refresh -q || true
           node scripts/mono/sync.mjs
