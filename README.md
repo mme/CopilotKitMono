@@ -133,7 +133,7 @@ OPENAI_API_KEY=sk-...
 ## Maintainer notes
 
 - The scheduled `mono-sync` workflow keeps `main`'s vendored dirs current
-  with the upstream defaults (and regenerates workspace globs + lockfile).
+  with the upstream defaults (and keeps the lockfile current).
   Run it on demand with `gh workflow run mono-sync` or locally with
   `pnpm mono:sync && git push origin main`.
 - If you protect `main`, the sync workflow's pushes must be allowed to bypass
@@ -153,4 +153,5 @@ OPENAI_API_KEY=sk-...
   permanent fix is a GitHub support ticket asking to disable LFS for this
   repo (not filed yet).
 - Adding a linked repo: new entry in `mono.config.json`; the next `mono-sync`
-  run vendors it and regenerates the workspace globs.
+  run vendors it; refresh the root workspace globs with
+  `node scripts/mono/sync-workspace.mjs` and commit.

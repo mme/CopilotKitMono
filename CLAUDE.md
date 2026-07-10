@@ -119,6 +119,7 @@ using raw `git`/`gh`. The repo registry is `mono.config.json` (remote names
 - ag-ui TS SDK: `ag-ui/sdks/typescript/packages/*` · integrations:
   `ag-ui/integrations/*/typescript` · middlewares: `ag-ui/middlewares/*`
 - Demo app: `CopilotKit/examples/v2/react/demo/`
-- Root `pnpm-workspace.yaml` is generated from the vendored repos' own
-  workspace files by `scripts/mono/sync-workspace.mjs` (run by `mono:sync`);
-  if upstream's layout changes mid-branch, re-run it instead of hand-editing.
+- Root `pnpm-workspace.yaml` is a hand-maintained mirror of the vendored
+  repos' own workspace files — it ties the cross-repo `workspace:*`
+  dependencies together. If upstream restructures and installs fail, refresh
+  it with `node scripts/mono/sync-workspace.mjs` and commit.

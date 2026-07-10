@@ -46,7 +46,7 @@ console.log("\nInstalling workspace…");
 run("pnpm", ["install"]);
 if (git(["status", "--porcelain"])) {
   git(["add", "-A"]);
-  git(["commit", "-m", "Sync workspace config and lockfile for vendored repos"]);
+  git(["commit", "-m", "Sync lockfile for vendored repos"]);
 }
 
 console.log(`\nBranch '${name}' is ready. Dev loop: pnpm dev:packages + pnpm dev:demo`);

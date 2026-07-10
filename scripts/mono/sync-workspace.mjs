@@ -1,9 +1,8 @@
-// Regenerates the root pnpm-workspace.yaml from the vendored repos' own
-// pnpm-workspace.yaml files (globs prefixed with each repo's directory).
-// Hardcoding upstream's internal package layout in the scaffold rots as
-// upstream moves; deriving it at branch time can't drift. Run by
-// `pnpm mono:branch` after vendoring; re-run manually if upstream's
-// workspace layout changes mid-branch.
+// Utility (run manually, not wired into any workflow): regenerates the root
+// pnpm-workspace.yaml from the vendored repos' own pnpm-workspace.yaml files
+// (globs prefixed with each repo's directory). The root file is
+// hand-maintained; when upstream restructures its layout and installs start
+// failing, run this instead of hand-typing the new globs, then commit.
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";

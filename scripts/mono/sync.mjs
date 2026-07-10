@@ -5,7 +5,6 @@
 // vendored paths on main (CI-enforced) — so this is safe to run unattended.
 // Run by .github/workflows/mono-sync.yml on a schedule; also fine locally.
 import { ROOT, repos, git, run, gitOk, ensureClean, ensureOnMain, fetchRepo } from "./lib.mjs";
-import { syncWorkspace } from "./sync-workspace.mjs";
 
 // The sync only plumbs history — LFS pointer files are what gets committed,
 // so never let a locally-installed git-lfs try to smudge (download) the
@@ -34,12 +33,14 @@ for (const repo of repos) {
   }
 }
 
-// Keep the root workspace globs and lockfile truthful for the vendored trees.
-syncWorkspace();
+// Keep the lockfile truthful for the vendored trees. If this fails after an
+// upstream restructure, the hand-maintained root pnpm-workspace.yaml has
+// gone stale — refresh it with `node scripts/mono/sync-workspace.mjs`
+// (mirrors the vendored repos' own workspace files) and commit.
 run("pnpm", ["install", "--lockfile-only"]);
 if (git(["status", "--porcelain"])) {
   git(["add", "-A"]);
-  git(["commit", "-m", "Sync workspace config and lockfile for vendored repos"]);
+  git(["commit", "-m", "Sync lockfile for vendored repos"]);
   changed = true;
 }
 
